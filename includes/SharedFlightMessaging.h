@@ -7,6 +7,48 @@
 #ifndef SharedFlightMessaging_h
 #define SharedFlightMessaging_h
 
+// #ifdef __cplusplus
+// 	#if APL
+//         #if __GNUC__ >= 4
+//             #define SF_MSGING_API extern "C" __attribute__((visibility("default")))
+//         #elif __MACH__
+// 			#define SF_MSGING_API extern "C"
+// 		#else		
+// 			#define SF_MSGING_API extern "C" __declspec(dllexport)
+// 		#endif
+// 	#elif IBM
+// 		#define SF_MSGING_API extern "C" __declspec(dllexport)
+// 	#elif LIN
+// 		#if __GNUC__ >= 4
+// 			#define SF_MSGING_API extern "C" __attribute__((visibility("default")))
+// 		#else
+// 			#define SF_MSGING_API extern "C"
+// 		#endif
+// 	#else
+// 		#error "Platform not defined!"
+// 	#endif
+// #else
+// 	#if APL
+//         #if __GNUC__ >= 4
+//             #define SF_MSGING_API __attribute__((visibility("default")))
+//         #elif __MACH__
+// 			#define SF_MSGING_API 
+// 		#else
+// 			#define SF_MSGING_API __declspec(dllexport)
+// 		#endif		
+// 	#elif IBM
+// 		#define SF_MSGING_API __declspec(dllexport)
+// 	#elif LIN
+//         #if __GNUC__ >= 4
+//             #define SF_MSGING_API __attribute__((visibility("default")))
+// 		#else
+// 			#define SF_MSGING_API
+// 		#endif		
+// 	#else
+// 		#error "Platform not defined!"
+// 	#endif
+// #endif
+
 /*
 
 By convention, plugin-defined notifications should have the high bit set 
@@ -37,7 +79,7 @@ struct SASL_MSG_FloatArrayData {
 };
 struct SASL_MSG_StringData {
     size_t mSize ;
-    const char * mData ;
+    const char * mData;
 };
 
 
@@ -68,85 +110,77 @@ struct SASL_MSG_StringData {
 // autosave should be capable of producing this data.  
 // Shared Flight will send this request only to one connected 
 // instance on the flight.
-#define MSG_CMD_ACF_SEND_AUTOSAVE_STATE 		0x08534600
+#define MSG_CMD_ACF_REQST_AUTOSAVE_STATE 		0x08534600
 
 // Sent by aircraft to Shared Flight with the response to
 // request for "autosave" type data for initial join.  This
 // data will be relayed by Shared Flight over the net to the
 // newly joining flight.
-#define MSG_CMD_SF_RCV_AUTOSAVE_STATE 		0x08534601
+#define MSG_CMD_SF_TRANSMIT_AUTOSAVE_STATE 		0x08534601
 
-#define MSG_CMD_SF_RCV_AUTOSAVE_STATE_SASL 	0x08534602
-
-
-#define MSG_CMD_ACF_LOAD_AUTOSAVE_STATE		0x08534603
-
-#define MSG_CMD_ACF_OAD_AUTOSAVE_STATE_SASL	0x08534604
+#define MSG_CMD_SF_TRANSMIT_AUTOSAVE_STATE_SASL 0x08534602
 
 
-#define MSG_MSG_SF_AUTOSAVE_STATE_DONE		0x88534600
+// Sent by Shared Flight to the aircraft with the "autosave"
+// type data that has been sent by existing system reference
+// to the newly joining instance of the aircraft within 
+// Shared Flight.  Any aircraft that has autosave should be
+// capable of processing this data.
+#define MSG_CMD_ACF_LOAD_AUTOSAVE_STATE			0x08534603
+
+#define MSG_CMD_ACF_LOAD_AUTOSAVE_STATE_SASL	0x08534604
+
+// Sent by aircraft to Shared Flight to notify that the aircraft
+// has successfully processed the data, in case it takes a long
+// while to get all the custom systems/state/flight model all
+// processed.
+#define MSG_MSG_SF_AUTOSAVE_STATE_DONE			0x88534600
 
 
-#define MSG_CMD_SF_RCV_AIRCRAFT_DATA 		0x08534605
+// Sent by aircraft to Shared Flight when there is data that 
+// should be sent to all the other instances of the aircraft
+// connected within the Shared Flight. Logic of who is system
+// master, pilot flying, crew, passenger is the responsibility
+// of the aircraft to handle with this data.
+// (NOTE: If thats a problem, let us know, we can add more
+// message types with your own required logic.)
+#define MSG_CMD_SF_TRANSMIT_AIRCRAFT_DATA 		0x08534605
 
-#define MSG_CMD_SF_RCV_AIRCRAFT_DATA_SASL 	0x08534606
-
-
-#define MSG_CMD_ACF_RCV_AIRCRAFT_DATA		0x08534607
-
-#define MSG_CMD_ACF_RCV_AIRCRAFT_DATA_SASL	0x08534608
-
-
-typedef void (__stdcall *SharedFlightReceiveAutosaveState)(const void *data, unsigned int size);
-
-typedef void (__stdcall *SharedFlightAutosaveCallback)(const void *data, unsigned int size);
-typedef void (__stdcall *SharedFlightSetAutosaveLoadCallback)(SharedFlightAutosaveCallback cb);
-
-typedef void (__stdcall *SharedFlightAutosaveStateApplyDone)();
-
-typedef void (__stdcall *SharedFlightReceiveAircraftData)(const void *data, unsigned int size);
-
-typedef void (__stdcall *SharedFlightReceiveAircraftData)(const void *data, unsigned int size);
-
-typedef void (__stdcall *SharedFlightAircraftDataCallback)(const void *data, unsigned int size);
-typedef void (__stdcall *SharedFlightSetAircraftDataCallback)(SharedFlightAircraftDataCallback cb);
+#define MSG_CMD_SF_TRANSMIT_AIRCRAFT_DATA_SASL 	0x08534606
 
 
-#define MSG_CMD_GET_SHARED_FLIGHT_INTERFACE	0x085346FF 			 // for XPLMSendMessageToPlugin, use pointer to SharedValuesInterface as parameter to fill in
-//--------------------------------------------------------------------------
+// Sent by Shared Flight to aircraf with the newly transmitted
+// data from other instance of the aircraft.
+#define MSG_CMD_ACF_NEW_AIRCRAFT_DATA			0x08534607
+
+#define MSG_CMD_ACF_NEW_AIRCRAFT_DATA_SASL		0x08534608
+
+
+typedef void (__cdecl *SharedFlightAutosaveRequestCallback)();
+typedef void (__cdecl *SharedFlightAutosaveLoadCallback)(const void *data, unsigned int size);
+typedef void (__cdecl *SharedFlightAircraftDataCallback)(const void *data, unsigned int size);
+
+typedef void (__cdecl *SharedFlightSetAutosaveRequestCallback)(SharedFlightAutosaveRequestCallback cb);
+typedef void (__cdecl *SharedFlightTransmitAutosaveState)(const void *data, unsigned int size);
+typedef void (__cdecl *SharedFlightSetAutosaveLoadCallback)(SharedFlightAutosaveLoadCallback cb);
+typedef void (__cdecl *SharedFlightAutosaveStateApplyDone)();
+typedef void (__cdecl *SharedFlightTransmitAircraftData)(const void *data, unsigned int size);
+typedef void (__cdecl *SharedFlightSetAircraftDataCallback)(SharedFlightAircraftDataCallback cb);
+
+
+// for XPLMSendMessageToPlugin, use pointer to SharedFlightInterPluginInterface as parameter to fill in
+#define MSG_CMD_GET_SHARED_FLIGHT_INTERFACE	0x085346FF 			 
 
 typedef struct
 {
-	SharedFlightReceiveAutosaveState ReceiveAutosaveState;
-	SharedFlightSetAutosaveLoadCallback SetAutoSaveCallback; // register an update callback called at each frame in sync with platform and aircraft values update, for using values functions below
-	SharedFlightAutosaveStateApplyDone AutosaveStateApplyDone; // remove a registred update callback	
-	SharedFlightReceiveAircraftData ReceiveAircraftData;
-	SharedFlightAircraftDataCallback SetAircraftDataCallback; // register an update callback called at each frame in sync with platform and aircraft values update, for using values functions below
+	SharedFlightSetAutosaveRequestCallback SetAutosaveRequestCallback;
+	SharedFlightTransmitAutosaveState TransmitAutosaveState;
+	SharedFlightSetAutosaveLoadCallback SetAutosaveLoadCallback;
+	SharedFlightAutosaveStateApplyDone AutosaveStateApplyDone;	
+	SharedFlightTransmitAircraftData TransmitAircraftData;
+	SharedFlightSetAircraftDataCallback SetAircraftDataCallback;
 } SharedFlightInterPluginInterface;
 
-
-/*
-	SharedDataVersionProc DataVersion; // to get actual dataset version
-	SharedDataAddUpdateProc DataAddUpdate; // register an update callback called at each frame in sync with platform and aircraft values update, for using values functions below
-	SharedDataDelUpdateProc DataDelUpdate; // remove a registred update callback
-	SharedValuesCountProc ValuesCount; // get count off all values (including deleted)
-	SharedValueIdByIndexProc ValueIdByIndex; // get value id by it's index (0 up to ValuesCount), or -1 if not exists or removed
-	SharedValueIdByNameProc ValueIdByName; // get value id by it's name, or -1 if not exists or removed
-	SharedValueNameProc ValueName; // get value name
-	SharedValueDescProc ValueDesc; // get value description
-	SharedValueTypeProc ValueType; // get value type, one of Value_Type_
-	SharedValueFlagsProc ValueFlags; // get value flags, OR Value_Flag_
-	SharedValueUnitsProc ValueUnits; // get value units, OR Value_Unit_
-	SharedValueParentProc ValueParent; // get id of the parent object value
-	SharedValueSetProc ValueSet; // set value
-	SharedValueGetProc ValueGet; // get value
-	SharedValueGetSizeProc ValueGetSize; // get actual size of the value data (for strings)
-	SharedValueObjectLoadStateProc ValueObjectLoadState; // deserialize object state
-	SharedValueObjectSaveStateProc ValueObjectSaveState; // serialize object state
-	SharedValueObjectNewValueProc ValueObjectNewValue; // add a new value
-
-} SharedValuesInterface;
-*/
 
 
 // function sfdMessageCallback ( id , messageID, data_table)
