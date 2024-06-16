@@ -1,0 +1,3 @@
+/home/jsnapp/sf-plugin-and-flight-server/sf-inter-plugin-msgs/examples/c-sample-plugin/build/CMakeFiles/sharedflightmessagingexample_xp12.dir
+/home/jsnapp/sf-plugin-and-flight-server/sf-inter-plugin-msgs/examples/c-sample-plugin/build/CMakeFiles/edit_cache.dir
+/home/jsnapp/sf-plugin-and-flight-server/sf-inter-plugin-msgs/examples/c-sample-plugin/build/CMakeFiles/rebuild_cache.dir

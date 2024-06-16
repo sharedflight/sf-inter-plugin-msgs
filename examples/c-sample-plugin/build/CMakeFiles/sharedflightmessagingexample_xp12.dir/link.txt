@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC  -rdynamic -nodefaultlibs -undefined_warning -fPIC -fvisibility=hidden -shared -Wl,-soname,sharedflightmessagingexample_xp12.xpl -o sharedflightmessagingexample_xp12.xpl CMakeFiles/sharedflightmessagingexample_xp12.dir/example_plugin.cpp.o 

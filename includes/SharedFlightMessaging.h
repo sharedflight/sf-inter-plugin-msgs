@@ -7,6 +7,16 @@
 #ifndef SharedFlightMessaging_h
 #define SharedFlightMessaging_h
 
+#define SF_MSGING_API __stdcall
+//#define SF_MSGING_API  
+
+//#ifdef __cplusplus
+//extern "C" {
+//#define SF_MSGING_API (__cdecl __declspec(dllexport))
+//#else 
+//#define SF_MSGING_API __declspec(dllexport)
+//#endif 
+
 // #ifdef __cplusplus
 // 	#if APL
 //         #if __GNUC__ >= 4
@@ -77,10 +87,11 @@ struct SASL_MSG_FloatArrayData {
     size_t mSize ;
     float * mData ;
 };
-struct SASL_MSG_StringData {
+
+typedef struct SASL_MSG_StringData {
     size_t mSize ;
     const char * mData;
-};
+} SF_MSG_DATA;
 
 
 /*
@@ -95,7 +106,7 @@ struct SASL_MSG_StringData {
 
 
 
-#define XPLM_SHARED_FLIGHT_PLUGIN_SIG "justinsnapp.SharedFlight" // for XPLMFindPluginBySignature
+#define XPLM_SHARED_FLIGHT_PLUGIN_SIG "com.sharedflight.SharedFlight" // for XPLMFindPluginBySignature
 
 
 // Shared Flight requests local "autosave" state (command)
@@ -118,7 +129,7 @@ struct SASL_MSG_StringData {
 // newly joining flight.
 #define MSG_CMD_SF_TRANSMIT_AUTOSAVE_STATE 		0x08534601
 
-#define MSG_CMD_SF_TRANSMIT_AUTOSAVE_STATE_SASL 0x08534602
+//#define MSG_CMD_SF_TRANSMIT_AUTOSAVE_STATE_SASL 0x08534602
 
 
 // Sent by Shared Flight to the aircraft with the "autosave"
@@ -128,7 +139,7 @@ struct SASL_MSG_StringData {
 // capable of processing this data.
 #define MSG_CMD_ACF_LOAD_AUTOSAVE_STATE			0x08534603
 
-#define MSG_CMD_ACF_LOAD_AUTOSAVE_STATE_SASL	0x08534604
+//#define MSG_CMD_ACF_LOAD_AUTOSAVE_STATE_SASL	0x08534604
 
 // Sent by aircraft to Shared Flight to notify that the aircraft
 // has successfully processed the data, in case it takes a long
@@ -146,26 +157,26 @@ struct SASL_MSG_StringData {
 // message types with your own required logic.)
 #define MSG_CMD_SF_TRANSMIT_AIRCRAFT_DATA 		0x08534605
 
-#define MSG_CMD_SF_TRANSMIT_AIRCRAFT_DATA_SASL 	0x08534606
+//#define MSG_CMD_SF_TRANSMIT_AIRCRAFT_DATA_SASL 	0x08534606
 
 
 // Sent by Shared Flight to aircraf with the newly transmitted
 // data from other instance of the aircraft.
 #define MSG_CMD_ACF_NEW_AIRCRAFT_DATA			0x08534607
 
-#define MSG_CMD_ACF_NEW_AIRCRAFT_DATA_SASL		0x08534608
+//#define MSG_CMD_ACF_NEW_AIRCRAFT_DATA_SASL		0x08534608
 
 
-typedef void (__cdecl *SharedFlightAutosaveRequestCallback)();
-typedef void (__cdecl *SharedFlightAutosaveLoadCallback)(const void *data, unsigned int size);
-typedef void (__cdecl *SharedFlightAircraftDataCallback)(const void *data, unsigned int size);
+typedef void (SF_MSGING_API *SharedFlightAutosaveRequestCallback)();
+typedef void (SF_MSGING_API *SharedFlightAutosaveLoadCallback)(const void *data, size_t size);
+typedef void (SF_MSGING_API *SharedFlightAircraftDataCallback)(const void *data, size_t size);
 
-typedef void (__cdecl *SharedFlightSetAutosaveRequestCallback)(SharedFlightAutosaveRequestCallback cb);
-typedef void (__cdecl *SharedFlightTransmitAutosaveState)(const void *data, unsigned int size);
-typedef void (__cdecl *SharedFlightSetAutosaveLoadCallback)(SharedFlightAutosaveLoadCallback cb);
-typedef void (__cdecl *SharedFlightAutosaveStateApplyDone)();
-typedef void (__cdecl *SharedFlightTransmitAircraftData)(const void *data, unsigned int size);
-typedef void (__cdecl *SharedFlightSetAircraftDataCallback)(SharedFlightAircraftDataCallback cb);
+typedef void (SF_MSGING_API *SharedFlightSetAutosaveRequestCallback)(SharedFlightAutosaveRequestCallback cb);
+typedef void (SF_MSGING_API *SharedFlightTransmitAutosaveState)(const void *data, size_t size);
+typedef void (SF_MSGING_API *SharedFlightSetAutosaveLoadCallback)(SharedFlightAutosaveLoadCallback cb);
+typedef void (SF_MSGING_API *SharedFlightAutosaveStateApplyDone)();
+typedef void (SF_MSGING_API *SharedFlightTransmitAircraftData)(const void *data, size_t size);
+typedef void (SF_MSGING_API *SharedFlightSetAircraftDataCallback)(SharedFlightAircraftDataCallback cb);
 
 
 // for XPLMSendMessageToPlugin, use pointer to SharedFlightInterPluginInterface as parameter to fill in
@@ -195,8 +206,5 @@ typedef struct
 // end
 
 // sasl.registerMessageHandler ( someMessageID , TYPE_STRING , sfdMessageCallback )
-
-
-
 
 #endif

@@ -1,0 +1,3 @@
+/usr/bin/cmake -E rm -f CMakeFiles/sharedflightmessagingexample.dir/objects.a
+/usr/bin/x86_64-w64-mingw32-ar qc CMakeFiles/sharedflightmessagingexample.dir/objects.a @CMakeFiles/sharedflightmessagingexample.dir/objects1.rsp
+/usr/bin/x86_64-w64-mingw32-g++ -shared -o ../bin/win_x64/sharedflightmessagingexample.xpl -Wl,--out-implib,libsharedflightmessagingexample.xpl.dll.a -Wl,--major-image-version,0,--minor-image-version,0 -Wl,--whole-archive CMakeFiles/sharedflightmessagingexample.dir/objects.a -Wl,--no-whole-archive @CMakeFiles/sharedflightmessagingexample.dir/linklibs.rsp
