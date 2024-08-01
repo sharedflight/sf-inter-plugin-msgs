@@ -106,7 +106,7 @@ typedef struct SASL_MSG_StringData {
 
 
 
-#define XPLM_SHARED_FLIGHT_PLUGIN_SIG "com.sharedflight.SharedFlight" // for XPLMFindPluginBySignature
+#define XPLM_SHARED_FLIGHT_PLUGIN_SIG "justinsnapp.SharedFlight" // "com.sharedflight.SharedFlight" // for XPLMFindPluginBySignature
 
 
 // Shared Flight requests local "autosave" state (command)
